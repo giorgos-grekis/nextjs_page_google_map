@@ -32,7 +32,7 @@ export default function Map() {
   // this useCallback function will receive an instance of the map and then it's going set the map to the ref (mapRef)
   const onLoad = useCallback((map) => (mapRef.current = map), []);
 
-  const houses = useMemo(() => (generateHouses(center)), [center])
+  const houses = useMemo(() => generateHouses(center), [center]);
 
   /* 
   to create a custom map go to 
@@ -73,7 +73,21 @@ export default function Map() {
                 icon={"/images/library_maps.png"}
               />
 
-              {houses?.map((house, index) => <Marker key={index} position={house} />)}
+              <MarkerClusterer>
+                {(clusterer) =>
+                  houses.map((house) => (
+                    <Marker
+                      key={house.lat}
+                      position={house}
+                      clusterer={clusterer}
+                    />
+                  ))
+                }
+              </MarkerClusterer>
+
+              {/* {houses?.map((house, index) => (
+                <Marker key={index} position={house} />
+              ))} */}
 
               <Circle center={office} radius={15000} options={closeOptions} />
 
@@ -121,7 +135,7 @@ const farOptions = {
   fillColor: "#FF5252",
 };
 
-const generateHouses = (position: LatLngLiteral): Array<LatLngLiteral>  => {
+const generateHouses = (position: LatLngLiteral): Array<LatLngLiteral> => {
   const _houses: Array<LatLngLiteral> = [];
   for (let i = 0; i < 100; i++) {
     const direction = Math.random() < 0.5 ? -2 : 2;
