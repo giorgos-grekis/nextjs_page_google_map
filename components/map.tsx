@@ -16,8 +16,7 @@ type MapOptions = google.maps.MapOptions;
 // center can cause some issues where, every time the component re-render, <GoogleMaps /> it things this is actually a new set of coordinates so every time will the component re-rendes the <GoogleMaps /> reset the center values to init values
 
 export default function Map() {
-
-  const [office, setOffice] = useState<LatLngLiteral>()
+  const [office, setOffice] = useState<LatLngLiteral>();
 
   const mapRef = useRef<GoogleMap>();
   const center = useMemo<LatLngLiteral>(() => ({ lat: 43, lng: -80 }), []);
@@ -30,8 +29,8 @@ export default function Map() {
     []
   );
 
-  // this useCallback function will receive an instance of the map and then it's going set the map to the ref (mapRef) 
-  const onLoad = useCallback(map => (mapRef.current = map), [])
+  // this useCallback function will receive an instance of the map and then it's going set the map to the ref (mapRef)
+  const onLoad = useCallback((map) => (mapRef.current = map), []);
 
   /* 
   to create a custom map go to 
@@ -49,10 +48,12 @@ export default function Map() {
     <div className="container">
       <div className="controls">
         <h1>Commute</h1>
-        <Places setOffice={(position) => {
+        <Places
+          setOffice={(position) => {
             setOffice(() => position);
-            mapRef.current?.panTo(position)
-        }}/>
+            mapRef.current?.panTo(position);
+          }}
+        />
       </div>
       <div className="map">
         <GoogleMap
@@ -61,7 +62,15 @@ export default function Map() {
           mapContainerClassName="map-container"
           options={options}
           onLoad={onLoad}
-        ></GoogleMap>
+        >
+          {office && (
+            <Marker
+              position={office}
+              // icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+              icon={"/images/library_maps.png"}
+            />
+          )}
+        </GoogleMap>
       </div>
     </div>
   );
