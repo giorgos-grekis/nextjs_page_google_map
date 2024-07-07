@@ -16,6 +16,9 @@ type MapOptions = google.maps.MapOptions;
 // center can cause some issues where, every time the component re-render, <GoogleMaps /> it things this is actually a new set of coordinates so every time will the component re-rendes the <GoogleMaps /> reset the center values to init values
 
 export default function Map() {
+
+  const [office, setOffice] = useState<LatLngLiteral>()
+
   const mapRef = useRef<GoogleMap>();
   const center = useMemo<LatLngLiteral>(() => ({ lat: 43, lng: -80 }), []);
   const options = useMemo<MapOptions>(
@@ -46,6 +49,10 @@ export default function Map() {
     <div className="container">
       <div className="controls">
         <h1>Commute</h1>
+        <Places setOffice={(position) => {
+            setOffice(() => position);
+            mapRef.current?.panTo(position)
+        }}/>
       </div>
       <div className="map">
         <GoogleMap
