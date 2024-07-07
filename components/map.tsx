@@ -13,8 +13,38 @@ type LatLngLiteral = google.maps.LatLngLiteral;
 type DirectionsResult = google.maps.DirectionsResult;
 type MapOptions = google.maps.MapOptions;
 
+// center can cause some issues where, every time the component re-render, <GoogleMaps /> it things this is actually a new set of coordinates so every time will the component re-rendes the <GoogleMaps /> reset the center values to init values
+
 export default function Map() {
-  return <div>Map</div>;
+  const mapRef = useRef<GoogleMap>();
+  const center = useMemo<LatLngLiteral>(() => ({ lat: 43, lng: -80 }), []);
+  const options = useMemo<MapOptions>(
+    () => ({
+      disableDefaultUI: true,
+      clickableIcons: false,
+    }),
+    []
+  );
+
+  // this useCallback function will receive an instance of the map and then it's going set the map to the ref (mapRef) 
+  const onLoad = useCallback(map => (mapRef.current = map), [])
+
+  return (
+    <div className="container">
+      <div className="controls">
+        <h1>Commute</h1>
+      </div>
+      <div className="map">
+        <GoogleMap
+          zoom={10}
+          center={center}
+          mapContainerClassName="map-container"
+          options={options}
+          onLoad={onLoad}
+        ></GoogleMap>
+      </div>
+    </div>
+  );
 }
 
 const defaultOptions = {
@@ -25,6 +55,7 @@ const defaultOptions = {
   editable: false,
   visible: true,
 };
+
 const closeOptions = {
   ...defaultOptions,
   zIndex: 3,
@@ -32,6 +63,7 @@ const closeOptions = {
   strokeColor: "#8BC34A",
   fillColor: "#8BC34A",
 };
+
 const middleOptions = {
   ...defaultOptions,
   zIndex: 2,
@@ -39,6 +71,7 @@ const middleOptions = {
   strokeColor: "#FBC02D",
   fillColor: "#FBC02D",
 };
+
 const farOptions = {
   ...defaultOptions,
   zIndex: 1,

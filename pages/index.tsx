@@ -15,5 +15,5 @@ export default function Home() {
   })
 
   if (!isLoaded) return <div>Loading...</div>
-  return <div>Map</div>;
+  return <Map />;
 }
