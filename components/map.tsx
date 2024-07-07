@@ -17,6 +17,7 @@ type MapOptions = google.maps.MapOptions;
 
 export default function Map() {
   const [office, setOffice] = useState<LatLngLiteral>();
+  const [directions, setDirections] = useState<DirectionsResult>();
 
   const mapRef = useRef<GoogleMap>();
   const center = useMemo<LatLngLiteral>(() => ({ lat: 43, lng: -80 }), []);
@@ -33,6 +34,26 @@ export default function Map() {
   const onLoad = useCallback((map) => (mapRef.current = map), []);
 
   const houses = useMemo(() => generateHouses(center), [center]);
+
+  const fetchDirections = (house: LatLngLiteral) => {
+    if (!office) return;
+
+    const service = new google.maps.DirectionsService();
+
+    service.route(
+      {
+        origin: house,
+        destination: office,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === "OK" && result) {
+          console.log("result: ", result);
+          setDirections(() => result);
+        }
+      }
+    );
+  };
 
   /* 
   to create a custom map go to 
@@ -65,6 +86,19 @@ export default function Map() {
           options={options}
           onLoad={onLoad}
         >
+          {directions && (
+            <DirectionsRenderer
+              directions={directions}
+              options={{
+                polylineOptions: {
+                  zIndex: 50,
+                  strokeOpacity: 0.7,
+                  strokeColor: "#1976D2",
+                  strokeWeight: 5
+                },
+              }}
+            />
+          )}
           {office && (
             <>
               <Marker
@@ -80,6 +114,9 @@ export default function Map() {
                       key={house.lat}
                       position={house}
                       clusterer={clusterer}
+                      onClick={() => {
+                        fetchDirections(house);
+                      }}
                     />
                   ))
                 }
