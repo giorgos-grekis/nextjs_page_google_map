@@ -20,6 +20,7 @@ export default function Map() {
   const center = useMemo<LatLngLiteral>(() => ({ lat: 43, lng: -80 }), []);
   const options = useMemo<MapOptions>(
     () => ({
+      mapId: "9c34d1df61f5a2ad",
       disableDefaultUI: true,
       clickableIcons: false,
     }),
@@ -29,6 +30,18 @@ export default function Map() {
   // this useCallback function will receive an instance of the map and then it's going set the map to the ref (mapRef) 
   const onLoad = useCallback(map => (mapRef.current = map), [])
 
+  /* 
+  to create a custom map go to 
+  -> https://console.cloud.google.com/google/maps-apis/home
+  -> Map Styles
+  -> Create style
+  
+  when create the new map style go to 
+   -> https://console.cloud.google.com/google/maps-apis/home
+   -> Map Management
+
+   When create th Map id add the id to <GoogleMaps /> options
+  */
   return (
     <div className="container">
       <div className="controls">
